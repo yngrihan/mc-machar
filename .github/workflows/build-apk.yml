@@ -1,0 +1,139 @@
+name: Build MC Machar APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Create Minimal Android WebView Project
+        run: |
+          mkdir -p app/src/main/java/com/yngrihan/mcmachar app/src/main/res/layout app/src/main/res/values
+
+          cat << 'GRADLE' > settings.gradle
+          rootProject.name = "MCMachar"
+          include ':app'
+          GRADLE
+
+          cat << 'GRADLE' > build.gradle
+          buildscript {
+            repositories {
+              google()
+              mavenCentral()
+            }
+            dependencies {
+              classpath 'com.android.tools.build:gradle:8.2.2'
+            }
+          }
+          allprojects {
+            repositories {
+              google()
+              mavenCentral()
+            }
+          }
+          GRADLE
+
+          cat << 'GRADLE' > app/build.gradle
+          plugins {
+            id 'com.android.application'
+          }
+          android {
+            namespace "com.yngrihan.mcmachar"
+            compileSdk 34
+
+            defaultConfig {
+              applicationId "com.yngrihan.mcmachar"
+              minSdk 24
+              targetSdk 34
+              versionCode 1
+              versionName "1.0"
+            }
+
+            buildTypes {
+              release {
+                minifyEnabled false
+              }
+            }
+          }
+          GRADLE
+
+          cat << 'XML' > app/src/main/AndroidManifest.xml
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <application
+              android:label="MC MACHAR"
+              android:usesCleartextTraffic="true"
+              android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+              <activity
+                android:name=".MainActivity"
+                android:exported="true"
+                android:configChanges="orientation|screenSize|keyboardHidden">
+                <intent-filter>
+                  <action android:name="android.intent.action.MAIN" />
+                  <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
+              </activity>
+            </application>
+          </manifest>
+          XML
+
+          cat << 'JAVA' > app/src/main/java/com/yngrihan/mcmachar/MainActivity.java
+          package com.yngrihan.mcmachar;
+
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+
+          public class MainActivity extends Activity {
+            private WebView webView;
+
+            @Override
+            protected void onCreate(Bundle savedInstanceState) {
+              super.onCreate(savedInstanceState);
+              webView = new WebView(this);
+              setContentView(webView);
+
+              WebSettings settings = webView.getSettings();
+              settings.setJavaScriptEnabled(true);
+              settings.setDomStorageEnabled(true);
+              settings.setMediaPlaybackRequiresUserGesture(false);
+
+              webView.setWebViewClient(new WebViewClient());
+              webView.loadUrl("https://yngrihan.github.io/mc-machar/");
+            }
+
+            @Override
+            public void onBackPressed() {
+              if (webView.canGoBack()) {
+                webView.goBack();
+              } else {
+                super.onBackPressed();
+              }
+            }
+          }
+          JAVA
+
+      - name: Build Debug APK
+        run: gradle assembleDebug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mc-machar-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
