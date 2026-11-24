@@ -3,530 +3,295 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>MC MACHAR - Endless Stick Shooter</title>
+  <title>MC MACHAR</title>
   <style>
-    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; touch-action: none; }
-    body {
-      margin: 0;
-      background: #141414;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
-    }
-    .phone-frame {
-      position: relative;
-      width: 100vw;
-      max-width: 420px;
-      height: 100vh;
-      max-height: 820px;
-      background: #ffffff;
-      overflow: hidden;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-    }
-    canvas { display: block; width: 100%; height: 100%; }
-
-    #menuScreen {
-      position: absolute;
-      inset: 0;
-      background: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      padding: 28px 20px 24px;
-      z-index: 10;
-    }
-    .top-stick-area {
-      position: relative;
-      width: 240px;
-      height: 180px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-    .bubble {
-      position: absolute;
-      top: 6px;
-      left: -10px;
-      background: #fff;
-      border: 2.5px solid #111;
-      border-radius: 16px;
-      padding: 8px 12px;
-      font-size: 11px;
-      font-weight: 900;
-      text-align: center;
-      max-width: 125px;
-      line-height: 1.25;
-    }
-    .title-wrap { text-align: center; }
-    .game-title {
-      margin: 0;
-      font-size: 46px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      color: #111;
-      line-height: 1;
-    }
-    .sub-title {
-      margin-top: 8px;
-      font-size: 12px;
-      letter-spacing: 5px;
-      color: #444;
-      font-weight: 700;
-    }
-    .play-btn {
-      background: #ffd426;
-      color: #111;
-      border: 3px solid #111;
-      border-radius: 999px;
-      padding: 14px 44px;
-      font-size: 22px;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 5px 0 #111;
-    }
-    .play-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #111; }
-
-    .rules-box {
-      width: 100%;
-      border: 2px dashed #e06c6c;
-      border-radius: 14px;
-      padding: 12px 14px;
-      background: #fffafa;
-      font-size: 12px;
-      color: #222;
-      line-height: 1.5;
-    }
-    .rules-box p { margin: 6px 0; font-weight: 600; }
-
-    #hud {
-      position: absolute;
-      top: 18px;
-      left: 0;
-      right: 0;
-      display: none;
-      justify-content: center;
-      align-items: flex-start;
-      pointer-events: none;
-      z-index: 5;
-    }
-    .score-box { text-align: center; }
-    #scoreVal { font-size: 42px; font-weight: 900; color: #111; line-height: 1; }
-    .score-lbl { font-size: 11px; font-weight: 800; color: #555; letter-spacing: 1px; }
-    #pauseBtn {
-      position: absolute;
-      right: 16px;
-      top: 4px;
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      border: 2.5px solid #111;
-      background: #fff;
-      font-size: 18px;
-      font-weight: 900;
-      cursor: pointer;
-      pointer-events: auto;
-      box-shadow: 0 4px 0 #111;
-    }
-
-    #pauseModal {
-      position: absolute;
-      inset: 0;
-      background: rgba(20, 20, 20, 0.85);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      z-index: 20;
-    }
-    .paused-text { color: #ffd426; font-size: 36px; font-weight: 900; letter-spacing: 2px; }
-    .modal-btn {
-      width: 210px;
-      padding: 13px 20px;
-      border-radius: 14px;
-      border: 2.5px solid #111;
-      font-size: 16px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-    .resume-btn { background: #ffd426; color: #111; }
-    .menu-btn { background: #2c2c2c; color: #fff; border-color: #fff; }
+    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #ffffff; font-family: Arial, Helvetica, sans-serif; }
+    canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
+    #menu { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; z-index: 10; padding: 20px; text-align: center; }
+    #menuFace { max-width: 150px; max-height: 150px; width: auto; height: auto; border-radius: 16px; border: 3px solid #111; object-fit: cover; }
+    #menu h1 { margin: 0; font-size: 42px; letter-spacing: 2px; color: #111; }
+    #playBtn { background: #ffd400; color: #111; border: 3px solid #111; border-radius: 14px; padding: 14px 38px; font-size: 24px; font-weight: 800; cursor: pointer; }
+    #hud { position: fixed; top: 18px; left: 0; right: 0; display: none; flex-direction: column; align-items: center; pointer-events: none; z-index: 5; }
+    #kills { font-size: 38px; font-weight: 900; color: #111; line-height: 1.05; }
+    #killsLabel { font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #111; margin-top: 2px; }
+    #closeBtn { position: fixed; top: 18px; left: 18px; z-index: 6; display: none; width: 46px; height: 46px; border-radius: 50%; border: none; background: #8e8e93; color: #fff; font-size: 22px; font-weight: bold; cursor: pointer; }
+    #pauseBtn { position: fixed; top: 18px; right: 18px; z-index: 6; display: none; width: 52px; height: 52px; border-radius: 12px; border: none; background: #2c2f36; color: #fff; font-size: 20px; font-weight: bold; cursor: pointer; }
+    #pauseOverlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 15; }
+    #pauseOverlay button { padding: 12px 28px; font-size: 20px; font-weight: 800; border-radius: 12px; border: 2px solid #111; cursor: pointer; background: #ffd400; color: #111; }
   </style>
 </head>
 <body>
-  <div class="phone-frame">
-    <div id="menuScreen">
-      <div class="top-stick-area">
-        <div class="bubble">HILA HILA KY MAAR DOGAAAA!</div>
-        <canvas id="menuStickCanvas" width="140" height="170"></canvas>
-      </div>
-
-      <div class="title-wrap">
-        <h1 class="game-title">MC MACHAR</h1>
-        <div class="sub-title">ENDLESS STICK SHOOTER</div>
-      </div>
-
-      <button class="play-btn" id="playBtn">▶ PLAY</button>
-
-      <div class="rules-box">
-        <p>🎯 Screen ko <b>HOLD</b> karein → aim line niklegi</p>
-        <p>🔥 Hold/Release karein → <b>LASER</b> fire!</p>
-        <p>⏸ Pause button se game ruk sakti hai</p>
-      </div>
-    </div>
-
-    <div id="hud">
-      <div class="score-box">
-        <div id="scoreVal">0</div>
-        <div class="score-lbl">TOTAL KILLS</div>
-      </div>
-      <button id="pauseBtn">❚❚</button>
-    </div>
-
-    <div id="pauseModal">
-      <div class="paused-text">❚❚ PAUSED</div>
-      <button class="modal-btn resume-btn" id="resumeBtn">▶ RESUME</button>
-      <button class="modal-btn menu-btn" id="mainMenuBtn">🏠 MAIN MENU</button>
-    </div>
-
-    <canvas id="gameCanvas"></canvas>
+  <div id="menu">
+    <img id="menuFace" src="face.png" alt="MC MACHAR" />
+    <h1>MC MACHAR</h1>
+    <button id="playBtn">PLAY</button>
+    <div style="font-size: 14px; color: #333;">Hold &amp; Drag to aim • Release to shoot</div>
   </div>
-
+  <button id="closeBtn">✕</button>
+  <div id="hud">
+    <div id="kills">0</div>
+    <div id="killsLabel">TOTAL KILLS</div>
+  </div>
+  <button id="pauseBtn">II</button>
+  <div id="pauseOverlay">
+    <button id="resumeBtn">RESUME</button>
+    <button id="restartBtn" style="background:#fff;">RESTART</button>
+  </div>
+  <canvas id="gameCanvas"></canvas>
   <script>
-    const USER_FACE_SRC = "face.png";
-
-    const userFaceImg = new Image();
-    let faceLoaded = false;
-    if (USER_FACE_SRC) {
-      userFaceImg.src = USER_FACE_SRC;
-      userFaceImg.onload = () => { faceLoaded = true; };
-    }
-
-    function drawPlayerFace(ctx, x, y, radius) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-
-      if (faceLoaded) {
-        ctx.drawImage(userFaceImg, x - radius, y - radius, radius * 2, radius * 2);
-      } else {
-        ctx.fillStyle = "#f2c6a0";
-        ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
-        ctx.fillStyle = "#222";
-        ctx.beginPath();
-        ctx.arc(x - radius * 0.32, y - radius * 0.1, radius * 0.12, 0, Math.PI * 2);
-        ctx.arc(x + radius * 0.32, y - radius * 0.1, radius * 0.12, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(x, y + radius * 0.25, radius * 0.35, 0.15 * Math.PI, 0.85 * Math.PI);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      ctx.strokeStyle = "#111";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-
-    const menuCanvas = document.getElementById("menuStickCanvas");
-    const mctx = menuCanvas.getContext("2d");
-    function drawMenuStickman() {
-      mctx.clearRect(0, 0, menuCanvas.width, menuCanvas.height);
-      mctx.strokeStyle = "#111";
-      mctx.lineWidth = 4;
-      mctx.lineCap = "round";
-
-      mctx.beginPath();
-      mctx.moveTo(70, 75);
-      mctx.lineTo(70, 125);
-      mctx.moveTo(40, 95);
-      mctx.lineTo(100, 95);
-      mctx.moveTo(70, 125);
-      mctx.lineTo(50, 160);
-      mctx.moveTo(70, 125);
-      mctx.lineTo(90, 160);
-      mctx.stroke();
-
-      drawPlayerFace(mctx, 70, 46, 26);
-    }
-    drawMenuStickman();
-
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    const menuScreen = document.getElementById("menuScreen");
-    const hud = document.getElementById("hud");
-    const pauseModal = document.getElementById("pauseModal");
-    const scoreVal = document.getElementById("scoreVal");
+    const menuEl = document.getElementById("menu");
+    const playBtn = document.getElementById("playBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    const hudEl = document.getElementById("hud");
+    const killsEl = document.getElementById("kills");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const pauseOverlay = document.getElementById("pauseOverlay");
+    const resumeBtn = document.getElementById("resumeBtn");
+    const restartBtn = document.getElementById("restartBtn");
 
-    let W = 0, H = 0;
+    const faceImg = new Image();
+    faceImg.src = "face.png";
+    let faceReady = false;
+    faceImg.onload = () => { faceReady = true; };
+
+    let audioCtx = null;
+    function ensureAudio() {
+      if (!audioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) audioCtx = new AudioCtx();
+      }
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
+    }
+
+    let killVariant = 0;
+    function playKillSound() {
+      ensureAudio();
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const mode = killVariant++ % 4;
+      const out = audioCtx.createGain();
+      out.gain.setValueAtTime(0.55, now);
+      out.connect(audioCtx.destination);
+
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = mode % 2 === 0 ? "sawtooth" : "square";
+      osc.frequency.setValueAtTime(mode === 2 ? 760 : 560, now);
+      osc.frequency.exponentialRampToValueAtTime(100, now + 0.26);
+      g.gain.setValueAtTime(0.65, now);
+      g.gain.exponentialRampToValueAtTime(0.01, now + 0.27);
+      osc.connect(g);
+      g.connect(out);
+      osc.start(now);
+      osc.stop(now + 0.27);
+    }
+
+    let width = 0, height = 0, dpr = 1;
     function resize() {
-      const rect = canvas.parentElement.getBoundingClientRect();
-      W = canvas.width = rect.width;
-      H = canvas.height = rect.height;
+      dpr = Math.min(window.devicePixelRatio || 1, 3);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
     }
-    resize();
     window.addEventListener("resize", resize);
+    resize();
 
-    let state = "MENU";
-    let score = 0;
-    let aiming = false;
-    let aimAngle = -Math.PI / 2;
-    let lasers = [];
-    let machars = [];
-    let spawnTimer = 0;
+    let gameState = "menu", kills = 0, aiming = false, aimPoint = { x: 0, y: 0 }, aimAngle = -Math.PI * 0.42;
+    let beams = [], mosquitoes = [], particles = [], spawnTimer = 0;
 
-    function getShooterOrigin() {
-      return { x: W * 0.52, y: H * 0.72 };
+    function getBedLayout() {
+      const bedW = Math.min(265, width * 0.64);
+      const bedH = 120;
+      return { x: Math.max(20, width * 0.12), y: height - bedH - 85, w: bedW, h: bedH };
     }
-
-    function spawnMachar() {
-      const fromLeft = Math.random() < 0.5;
-      machars.push({
-        x: fromLeft ? -25 : W + 25,
-        y: H * (0.16 + Math.random() * 0.34),
-        vx: (fromLeft ? 1 : -1) * (1.5 + Math.random() * 1.8),
-        phase: Math.random() * Math.PI * 2,
-        r: 18
+    function getShooterOrigin() {
+      const bed = getBedLayout();
+      return { x: bed.x + bed.w * 0.56, y: bed.y + bed.h * 0.52 };
+    }
+    function spawnMosquito() {
+      mosquitoes.push({
+        x: 60 + Math.random() * Math.max(50, width - 120),
+        y: 110 + Math.random() * Math.max(80, height * 0.42),
+        vx: (Math.random() < 0.5 ? -1 : 1) * (1.2 + Math.random() * 1.5),
+        vy: (Math.random() - 0.5) * 0.9,
+        radius: 26,
+        wingPhase: Math.random() * Math.PI * 2
       });
     }
+    function resetGame() {
+      kills = 0; killsEl.textContent = "0"; aiming = false;
+      beams = []; mosquitoes = []; particles = []; spawnTimer = 0;
+      for (let i = 0; i < 2; i++) spawnMosquito();
+    }
+    function openMenu() {
+      gameState = "menu"; aiming = false;
+      pauseOverlay.style.display = "none"; hudEl.style.display = "none";
+      closeBtn.style.display = "none"; pauseBtn.style.display = "none"; menuEl.style.display = "flex";
+    }
+
+    playBtn.addEventListener("click", () => {
+      ensureAudio(); menuEl.style.display = "none"; hudEl.style.display = "flex";
+      closeBtn.style.display = "block"; pauseBtn.style.display = "block";
+      pauseOverlay.style.display = "none"; gameState = "playing"; resetGame();
+    });
+    closeBtn.addEventListener("click", openMenu);
+    pauseBtn.addEventListener("click", () => { if (gameState === "playing") { gameState = "paused"; aiming = false; pauseOverlay.style.display = "flex"; } });
+    resumeBtn.addEventListener("click", () => { pauseOverlay.style.display = "none"; gameState = "playing"; });
+    restartBtn.addEventListener("click", () => { pauseOverlay.style.display = "none"; gameState = "playing"; resetGame(); });
 
     function updateAim(clientX, clientY) {
-      const rect = canvas.getBoundingClientRect();
-      const px = clientX - rect.left;
-      const py = clientY - rect.top;
-      const orig = getShooterOrigin();
-      let angle = Math.atan2(py - orig.y, px - orig.x);
-      if (angle > -0.15) angle = -0.15;
-      if (angle < -Math.PI + 0.15) angle = -Math.PI + 0.15;
-      aimAngle = angle;
+      aimPoint = { x: clientX, y: clientY };
+      const o = getShooterOrigin();
+      aimAngle = Math.atan2(clientY - o.y, clientX - o.x);
     }
-
-    function fireLaser() {
-      const orig = getShooterOrigin();
-      lasers.push({
-        x1: orig.x,
-        y1: orig.y,
-        x2: orig.x + Math.cos(aimAngle) * Math.max(W, H) * 1.5,
-        y2: orig.y + Math.sin(aimAngle) * Math.max(W, H) * 1.5,
-        life: 10
-      });
-
-      for (let i = machars.length - 1; i >= 0; i--) {
-        const m = machars[i];
-        const dist = pointToSegmentDist(m.x, m.y, orig.x, orig.y, orig.x + Math.cos(aimAngle) * 1500, orig.y + Math.sin(aimAngle) * 1500);
-        if (dist <= m.r + 8) {
-          machars.splice(i, 1);
-          score++;
-          scoreVal.textContent = score;
+    function pointToSegmentDistance(px, py, x1, y1, x2, y2) {
+      const l2 = (x2 - x1) ** 2 + (y2 - y1) ** 2;
+      if (l2 === 0) return Math.hypot(px - x1, py - y1);
+      const t = Math.max(0, Math.min(1, ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / l2));
+      return Math.hypot(px - (x1 + t * (x2 - x1)), py - (y1 + t * (y2 - y1)));
+    }
+    function killMosquito(index) {
+      const m = mosquitoes[index];
+      mosquitoes.splice(index, 1);
+      kills += 1;
+      killsEl.textContent = String(kills);
+      playKillSound();
+      for (let k = 0; k < 14; k++) {
+        const ang = (Math.PI * 2 * k) / 14;
+        const spd = 2 + Math.random() * 4;
+        particles.push({ x: m.x, y: m.y, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd, life: 1, color: k % 2 === 0 ? "#ef4444" : "#ffd400" });
+      }
+    }
+    function fireBeam() {
+      const o = getShooterOrigin();
+      const len = Math.hypot(width, height) * 1.35;
+      const endX = o.x + Math.cos(aimAngle) * len;
+      const endY = o.y + Math.sin(aimAngle) * len;
+      beams.push({ x1: o.x, y1: o.y, x2: endX, y2: endY, alpha: 1 });
+      for (let i = mosquitoes.length - 1; i >= 0; i--) {
+        if (pointToSegmentDistance(mosquitoes[i].x, mosquitoes[i].y, o.x, o.y, endX, endY) <= mosquitoes[i].radius + 14) {
+          killMosquito(i);
         }
       }
     }
 
-    function pointToSegmentDist(px, py, x1, y1, x2, y2) {
-      const l2 = (x2 - x1) ** 2 + (y2 - y1) ** 2;
-      if (l2 === 0) return Math.hypot(px - x1, py - y1);
-      let t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / l2;
-      t = Math.max(0, Math.min(1, t));
-      return Math.hypot(px - (x1 + t * (x2 - x1)), py - (y1 + t * (y2 - y1)));
+    canvas.addEventListener("pointerdown", (e) => { if (gameState === "playing") { ensureAudio(); aiming = true; updateAim(e.clientX, e.clientY); } });
+    canvas.addEventListener("pointermove", (e) => { if (aiming && gameState === "playing") updateAim(e.clientX, e.clientY); });
+    window.addEventListener("pointerup", () => { if (aiming && gameState === "playing") { aiming = false; fireBeam(); } });
+
+    function drawBedAndStickman() {
+      const bed = getBedLayout();
+      ctx.save();
+      ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.strokeStyle = "#111"; ctx.lineWidth = 3.5;
+
+      ctx.fillStyle = "#5b5d62";
+      ctx.beginPath(); ctx.moveTo(bed.x, bed.y - 26); ctx.lineTo(bed.x + 24, bed.y - 34);
+      ctx.lineTo(bed.x + 24, bed.y + bed.h - 24); ctx.lineTo(bed.x, bed.y + bed.h - 14); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = "#9ea3ad";
+      ctx.beginPath(); ctx.moveTo(bed.x + 12, bed.y + 18); ctx.lineTo(bed.x + bed.w, bed.y - 10);
+      ctx.lineTo(bed.x + bed.w, bed.y + bed.h - 28); ctx.lineTo(bed.x + 12, bed.y + bed.h - 4); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = "#4d5958";
+      ctx.beginPath(); ctx.moveTo(bed.x + 66, bed.y + 34); ctx.lineTo(bed.x + bed.w - 4, bed.y + 10);
+      ctx.lineTo(bed.x + bed.w - 4, bed.y + bed.h - 28); ctx.lineTo(bed.x + 56, bed.y + bed.h - 12); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = "#222";
+      ctx.fillRect(bed.x + 16, bed.y + bed.h - 10, 12, 18);
+      ctx.fillRect(bed.x + bed.w - 26, bed.y + bed.h - 28, 12, 18);
+
+      const neckX = bed.x + 68, neckY = bed.y + 26, hipX = bed.x + bed.w * 0.56, hipY = bed.y + bed.h * 0.48;
+      ctx.lineWidth = 4.5;
+      ctx.beginPath();
+      ctx.moveTo(neckX, neckY); ctx.lineTo(hipX, hipY);
+      ctx.moveTo(hipX, hipY); ctx.lineTo(bed.x + bed.w - 34, bed.y + bed.h - 28);
+      ctx.moveTo(hipX + 6, hipY + 3); ctx.lineTo(bed.x + bed.w - 22, bed.y + bed.h - 24);
+      ctx.moveTo(neckX + 8, neckY + 4); ctx.lineTo(neckX + 8 + Math.cos(aimAngle) * 28, neckY + 4 + Math.sin(aimAngle) * 28);
+      ctx.stroke();
+
+      if (faceReady) {
+        const aspect = faceImg.naturalWidth && faceImg.naturalHeight ? faceImg.naturalWidth / faceImg.naturalHeight : 1;
+        const headH = 54, headW = Math.min(62, Math.max(42, headH * aspect)), headX = bed.x + 26, headY = bed.y - 24;
+        ctx.save();
+        ctx.beginPath(); ctx.ellipse(headX + headW * 0.5, headY + headH * 0.5, headW * 0.52, headH * 0.52, -0.15, 0, Math.PI * 2); ctx.clip();
+        ctx.drawImage(faceImg, headX, headY, headW, headH);
+        ctx.restore();
+        ctx.beginPath(); ctx.ellipse(headX + headW * 0.5, headY + headH * 0.5, headW * 0.52, headH * 0.52, -0.15, 0, Math.PI * 2);
+        ctx.lineWidth = 2.5; ctx.stroke();
+      }
+      ctx.restore();
     }
 
-    canvas.addEventListener("pointerdown", (e) => {
-      if (state !== "PLAYING") return;
-      aiming = true;
-      updateAim(e.clientX, e.clientY);
-    });
-
-    canvas.addEventListener("pointermove", (e) => {
-      if (state !== "PLAYING" || !aiming) return;
-      updateAim(e.clientX, e.clientY);
-    });
-
-    window.addEventListener("pointerup", () => {
-      if (state !== "PLAYING" || !aiming) return;
-      aiming = false;
-      fireLaser();
-    });
-
-    document.getElementById("playBtn").addEventListener("click", () => {
-      score = 0;
-      scoreVal.textContent = "0";
-      machars = [];
-      lasers = [];
-      spawnMachar();
-      state = "PLAYING";
-      menuScreen.style.display = "none";
-      hud.style.display = "flex";
-      pauseModal.style.display = "none";
-    });
-
-    document.getElementById("pauseBtn").addEventListener("click", () => {
-      if (state !== "PLAYING") return;
-      state = "PAUSED";
-      aiming = false;
-      pauseModal.style.display = "flex";
-    });
-
-    document.getElementById("resumeBtn").addEventListener("click", () => {
-      if (state !== "PAUSED") return;
-      state = "PLAYING";
-      pauseModal.style.display = "none";
-    });
-
-    document.getElementById("mainMenuBtn").addEventListener("click", () => {
-      state = "MENU";
-      aiming = false;
-      pauseModal.style.display = "none";
-      hud.style.display = "none";
-      menuScreen.style.display = "flex";
-      drawMenuStickman();
-    });
-
-    function drawBedAndPlayer() {
-      const bedX = W * 0.14;
-      const bedY = H * 0.68;
-      const bedW = W * 0.66;
-      const bedH = H * 0.14;
-
-      ctx.fillStyle = "#d9d9d9";
-      ctx.strokeStyle = "#111";
-      ctx.lineWidth = 3;
-      ctx.fillRect(bedX, bedY, bedW, bedH);
-      ctx.strokeRect(bedX, bedY, bedW, bedH);
-
-      ctx.fillStyle = "#333";
-      ctx.fillRect(bedX, bedY - 36, 14, bedH + 36);
-      ctx.fillRect(bedX + 6, bedY + bedH, 10, 18);
-      ctx.fillRect(bedX + bedW - 16, bedY + bedH, 10, 18);
-
-      ctx.fillStyle = "#3f5959";
-      ctx.fillRect(bedX + 55, bedY + 12, bedW - 70, bedH - 16);
-      ctx.strokeRect(bedX + 55, bedY + 12, bedW - 70, bedH - 16);
-
-      ctx.strokeStyle = "#111";
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      ctx.moveTo(bedX + 52, bedY + 28);
-      ctx.lineTo(bedX + bedW - 22, bedY + 38);
-      ctx.stroke();
-
-      drawPlayerFace(ctx, bedX + 36, bedY + 20, 22);
+    function drawAimLine() {
+      const o = getShooterOrigin(), len = Math.hypot(width, height) * 1.25;
+      ctx.save();
+      ctx.strokeStyle = "#222"; ctx.lineWidth = 3; ctx.setLineDash([10, 9]);
+      ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(o.x + Math.cos(aimAngle) * len, o.y + Math.sin(aimAngle) * len); ctx.stroke();
+      ctx.setLineDash([]);
+      if (aiming) {
+        ctx.beginPath(); ctx.arc(aimPoint.x, aimPoint.y, 18, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(180, 185, 195, 0.45)"; ctx.fill();
+        ctx.lineWidth = 2; ctx.strokeStyle = "rgba(120, 125, 135, 0.7)"; ctx.stroke();
+      }
+      ctx.restore();
     }
 
-    function drawMachar(m) {
-      ctx.save();
-      ctx.translate(m.x, m.y);
+    function drawBeams() {
+      for (let i = beams.length - 1; i >= 0; i--) {
+        const b = beams[i];
+        ctx.save(); ctx.globalAlpha = b.alpha; ctx.strokeStyle = "#ff3b00"; ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x2, b.y2); ctx.stroke(); ctx.restore();
+        b.alpha -= 0.09; if (b.alpha <= 0) beams.splice(i, 1);
+      }
+    }
 
-      const flap = Math.sin(m.phase) * 0.5;
-      ctx.fillStyle = "rgba(180, 220, 255, 0.85)";
-      ctx.strokeStyle = "#333";
-      ctx.lineWidth = 1.5;
+    function drawMosquitoes() {
+      for (const m of mosquitoes) {
+        m.wingPhase += 0.45;
+        const flap = Math.sin(m.wingPhase) * 6;
+        ctx.save(); ctx.translate(m.x, m.y);
+        ctx.fillStyle = "rgba(210, 225, 245, 0.9)"; ctx.strokeStyle = "#555"; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.ellipse(-6, -12 + flap * 0.35, 12, 5, -0.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(5, -13 - flap * 0.35, 11, 5, 0.45, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = "#222"; ctx.lineWidth = 1.8;
+        ctx.beginPath(); ctx.moveTo(-4, 6); ctx.lineTo(-14, 18); ctx.moveTo(2, 6); ctx.lineTo(0, 20); ctx.moveTo(7, 5); ctx.lineTo(16, 17); ctx.stroke();
+        ctx.fillStyle = "#222"; ctx.beginPath(); ctx.ellipse(4, 0, 10, 7, 0.1, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#e11d48"; ctx.beginPath(); ctx.ellipse(-8, 1, 10, 7, -0.1, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(10, -2, 3.2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(11, -2, 1.5, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#111"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(14, 1); ctx.lineTo(23, 5); ctx.stroke();
+        ctx.restore();
+      }
+    }
 
-      ctx.save();
-      ctx.rotate(-0.5 + flap);
-      ctx.beginPath();
-      ctx.ellipse(-4, -12, 12, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.save();
-      ctx.rotate(0.5 - flap);
-      ctx.beginPath();
-      ctx.ellipse(4, -12, 12, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.fillStyle = "#b8292f";
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 12, 7, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(-4, 5); ctx.lineTo(-10, 15);
-      ctx.moveTo(2, 6); ctx.lineTo(4, 16);
-      ctx.moveTo(7, 5); ctx.lineTo(14, 14);
-      ctx.stroke();
-
-      ctx.restore();
+    function drawParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        ctx.save(); ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.color;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        p.x += p.vx; p.y += p.vy; p.life -= 0.04; if (p.life <= 0) particles.splice(i, 1);
+      }
     }
 
     function loop() {
-      ctx.clearRect(0, 0, W, H);
-
-      if (state === "PLAYING" || state === "PAUSED") {
-        drawBedAndPlayer();
-
-        if (state === "PLAYING") {
-          spawnTimer++;
-          if (spawnTimer > 75 && machars.length < 4) {
-            spawnMachar();
-            spawnTimer = 0;
-          }
-          for (let i = machars.length - 1; i >= 0; i--) {
-            const m = machars[i];
-            m.x += m.vx;
-            m.phase += 0.45;
-            m.y += Math.sin(m.phase * 0.25) * 0.8;
-            if (m.x < -50 || m.x > W + 50) {
-              machars.splice(i, 1);
-            }
-          }
-        }
-
-        machars.forEach(drawMachar);
-
-        if (aiming) {
-          const orig = getShooterOrigin();
-          const endX = orig.x + Math.cos(aimAngle) * Math.max(W, H) * 1.4;
-          const endY = orig.y + Math.sin(aimAngle) * Math.max(W, H) * 1.4;
-
-          ctx.save();
-          ctx.setLineDash([10, 8]);
-          ctx.lineWidth = 3;
-          ctx.strokeStyle = "#111";
-          ctx.beginPath();
-          ctx.moveTo(orig.x, orig.y);
-          ctx.lineTo(endX, endY);
-          ctx.stroke();
-          ctx.setLineDash([]);
-
-          const ringX = orig.x + Math.cos(aimAngle) * 95;
-          const ringY = orig.y + Math.sin(aimAngle) * 95;
-          ctx.beginPath();
-          ctx.arc(ringX, ringY, 14, 0, Math.PI * 2);
-          ctx.strokeStyle = "#111";
-          ctx.lineWidth = 2.5;
-          ctx.stroke();
-          ctx.restore();
-        }
-
-        for (let i = lasers.length - 1; i >= 0; i--) {
-          const l = lasers[i];
-          ctx.save();
-          ctx.strokeStyle = "rgba(255, 90, 30, 0.9)";
-          ctx.lineWidth = 6 * (l.life / 10);
-          ctx.beginPath();
-          ctx.moveTo(l.x1, l.y1);
-          ctx.lineTo(l.x2, l.y2);
-          ctx.stroke();
-          ctx.restore();
-
-          l.life--;
-          if (l.life <= 0) lasers.splice(i, 1);
+      ctx.clearRect(0, 0, width, height);
+      if (gameState === "playing") {
+        spawnTimer += 1;
+        if (spawnTimer > 80 && mosquitoes.length < 5) { spawnTimer = 0; spawnMosquito(); }
+        for (const m of mosquitoes) {
+          m.x += m.vx; m.y += m.vy;
+          if (m.x < 35 || m.x > width - 35) m.vx *= -1;
+          if (m.y < 95 || m.y > height * 0.56) m.vy *= -1;
         }
       }
-
+      if (gameState !== "menu") { drawAimLine(); drawBeams(); drawMosquitoes(); drawParticles(); drawBedAndStickman(); }
       requestAnimationFrame(loop);
     }
     loop();
