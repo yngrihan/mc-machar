@@ -73,15 +73,15 @@
       const now = audioCtx.currentTime;
       const mode = killVariant++ % 4;
       const out = audioCtx.createGain();
-      out.gain.setValueAtTime(0.55, now);
+      out.gain.setValueAtTime(0.6, now);
       out.connect(audioCtx.destination);
 
       const osc = audioCtx.createOscillator();
       const g = audioCtx.createGain();
       osc.type = mode % 2 === 0 ? "sawtooth" : "square";
-      osc.frequency.setValueAtTime(mode === 2 ? 760 : 560, now);
-      osc.frequency.exponentialRampToValueAtTime(100, now + 0.26);
-      g.gain.setValueAtTime(0.65, now);
+      osc.frequency.setValueAtTime(mode === 2 ? 780 : 560, now);
+      osc.frequency.exponentialRampToValueAtTime(95, now + 0.26);
+      g.gain.setValueAtTime(0.7, now);
       g.gain.exponentialRampToValueAtTime(0.01, now + 0.27);
       osc.connect(g);
       g.connect(out);
@@ -185,7 +185,6 @@
     canvas.addEventListener("pointerdown", (e) => { if (gameState === "playing") { ensureAudio(); aiming = true; updateAim(e.clientX, e.clientY); } });
     canvas.addEventListener("pointermove", (e) => { if (aiming && gameState === "playing") updateAim(e.clientX, e.clientY); });
     window.addEventListener("pointerup", () => { if (aiming && gameState === "playing") { aiming = false; fireBeam(); } });
-
     function drawBedAndStickman() {
       const bed = getBedLayout();
       ctx.save();
