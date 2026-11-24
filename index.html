@@ -6,7 +6,7 @@
   <title>MC MACHAR</title>
   <style>
     * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #ffffff; font-family: Arial, Helvetica, sans-serif; }
+    html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #ffffff; font-family: Arial, Helvetica, sans-serif; }
     canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
     #menu { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; z-index: 10; padding: 20px; text-align: center; }
     #menuFace { max-width: 150px; max-height: 150px; width: auto; height: auto; border-radius: 16px; border: 3px solid #111; object-fit: cover; }
@@ -73,7 +73,7 @@
       const now = audioCtx.currentTime;
       const mode = killVariant++ % 4;
       const out = audioCtx.createGain();
-      out.gain.setValueAtTime(0.6, now);
+      out.gain.setValueAtTime(0.65, now);
       out.connect(audioCtx.destination);
 
       const osc = audioCtx.createOscillator();
@@ -81,7 +81,7 @@
       osc.type = mode % 2 === 0 ? "sawtooth" : "square";
       osc.frequency.setValueAtTime(mode === 2 ? 780 : 560, now);
       osc.frequency.exponentialRampToValueAtTime(95, now + 0.26);
-      g.gain.setValueAtTime(0.7, now);
+      g.gain.setValueAtTime(0.75, now);
       g.gain.exponentialRampToValueAtTime(0.01, now + 0.27);
       osc.connect(g);
       g.connect(out);
@@ -103,7 +103,9 @@
     window.addEventListener("resize", resize);
     resize();
 
-    let gameState = "menu", kills = 0, aiming = false, aimPoint = { x: 0, y: 0 }, aimAngle = -Math.PI * 0.42;
+    let gameState = "menu", kills = 0, aiming = false;
+    let aimPoint = { x: width * 0.52, y: height * 0.56 };
+    let aimAngle = -Math.PI * 0.42;
     let beams = [], mosquitoes = [], particles = [], spawnTimer = 0;
 
     function getBedLayout() {
@@ -127,6 +129,9 @@
     }
     function resetGame() {
       kills = 0; killsEl.textContent = "0"; aiming = false;
+      aimPoint = { x: width * 0.52, y: height * 0.56 };
+      const o = getShooterOrigin();
+      aimAngle = Math.atan2(aimPoint.y - o.y, aimPoint.x - o.x);
       beams = []; mosquitoes = []; particles = []; spawnTimer = 0;
       for (let i = 0; i < 2; i++) spawnMosquito();
     }
@@ -171,12 +176,12 @@
     }
     function fireBeam() {
       const o = getShooterOrigin();
-      const len = Math.hypot(width, height) * 1.35;
+      const len = Math.hypot(width, height) * 1.4;
       const endX = o.x + Math.cos(aimAngle) * len;
       const endY = o.y + Math.sin(aimAngle) * len;
       beams.push({ x1: o.x, y1: o.y, x2: endX, y2: endY, alpha: 1 });
       for (let i = mosquitoes.length - 1; i >= 0; i--) {
-        if (pointToSegmentDistance(mosquitoes[i].x, mosquitoes[i].y, o.x, o.y, endX, endY) <= mosquitoes[i].radius + 14) {
+        if (pointToSegmentDistance(mosquitoes[i].x, mosquitoes[i].y, o.x, o.y, endX, endY) <= mosquitoes[i].radius + 16) {
           killMosquito(i);
         }
       }
@@ -218,7 +223,7 @@
 
       if (faceReady) {
         const aspect = faceImg.naturalWidth && faceImg.naturalHeight ? faceImg.naturalWidth / faceImg.naturalHeight : 1;
-        const headH = 54, headW = Math.min(62, Math.max(42, headH * aspect)), headX = bed.x + 26, headY = bed.y - 24;
+        const headH = 56, headW = Math.min(64, Math.max(44, headH * aspect)), headX = bed.x + 25, headY = bed.y - 25;
         ctx.save();
         ctx.beginPath(); ctx.ellipse(headX + headW * 0.5, headY + headH * 0.5, headW * 0.52, headH * 0.52, -0.15, 0, Math.PI * 2); ctx.clip();
         ctx.drawImage(faceImg, headX, headY, headW, headH);
@@ -229,17 +234,47 @@
       ctx.restore();
     }
 
-    function drawAimLine() {
-      const o = getShooterOrigin(), len = Math.hypot(width, height) * 1.25;
+    function drawAimPoints() {
+      const o = getShooterOrigin();
+      const totalDist = Math.hypot(width, height) * 1.3;
+      const dirX = Math.cos(aimAngle);
+      const dirY = Math.sin(aimAngle);
+      const endX = o.x + dirX * totalDist;
+      const endY = o.y + dirY * totalDist;
+
       ctx.save();
-      ctx.strokeStyle = "#222"; ctx.lineWidth = 3; ctx.setLineDash([10, 9]);
-      ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(o.x + Math.cos(aimAngle) * len, o.y + Math.sin(aimAngle) * len); ctx.stroke();
+      // Dashed aim path across full play screen
+      ctx.strokeStyle = "#222";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([10, 9]);
+      ctx.beginPath();
+      ctx.moveTo(o.x, o.y);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
       ctx.setLineDash([]);
-      if (aiming) {
-        ctx.beginPath(); ctx.arc(aimPoint.x, aimPoint.y, 18, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(180, 185, 195, 0.45)"; ctx.fill();
-        ctx.lineWidth = 2; ctx.strokeStyle = "rgba(120, 125, 135, 0.7)"; ctx.stroke();
+
+      // Aim dots along trajectory + active circular aim point
+      for (let d = 55; d < Math.min(totalDist, Math.max(width, height)); d += 52) {
+        ctx.beginPath();
+        ctx.arc(o.x + dirX * d, o.y + dirY * d, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = "#111";
+        ctx.fill();
       }
+
+      const ptX = aiming ? aimPoint.x : o.x + dirX * 190;
+      const ptY = aiming ? aimPoint.y : o.y + dirY * 190;
+      ctx.beginPath();
+      ctx.arc(ptX, ptY, 18, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(180, 185, 195, 0.45)";
+      ctx.fill();
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = "rgba(90, 95, 105, 0.85)";
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(ptX, ptY, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = "#111";
+      ctx.fill();
       ctx.restore();
     }
 
@@ -291,7 +326,7 @@
           if (m.y < 95 || m.y > height * 0.56) m.vy *= -1;
         }
       }
-      if (gameState !== "menu") { drawAimLine(); drawBeams(); drawMosquitoes(); drawParticles(); drawBedAndStickman(); }
+      if (gameState !== "menu") { drawAimPoints(); drawBeams(); drawMosquitoes(); drawParticles(); drawBedAndStickman(); }
       requestAnimationFrame(loop);
     }
     loop();
