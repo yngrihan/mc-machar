@@ -185,6 +185,7 @@
     canvas.addEventListener("pointerdown", (e) => { if (gameState === "playing") { ensureAudio(); aiming = true; updateAim(e.clientX, e.clientY); } });
     canvas.addEventListener("pointermove", (e) => { if (aiming && gameState === "playing") updateAim(e.clientX, e.clientY); });
     window.addEventListener("pointerup", () => { if (aiming && gameState === "playing") { aiming = false; fireBeam(); } });
+
     function drawBedAndStickman() {
       const bed = getBedLayout();
       ctx.save();
