@@ -9,7 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -25,7 +26,8 @@ jobs:
 
       - name: Create Android WebView Project
         run: |
-          mkdir -p app/src/main/java/com/yngrihan/mcmachar app/src/main/res/layout app/src/main/res/values
+          set -e
+          mkdir -p app/src/main/java/com/yngrihan/mcmachar
 
           cat << 'GRADLE' > settings.gradle
           rootProject.name = "MCMachar"
